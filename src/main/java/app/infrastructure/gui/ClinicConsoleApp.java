@@ -2,34 +2,42 @@ package app.infrastructure.gui;
 
 import app.application.port.in.UserManagementUseCase;
 import app.application.port.in.PatientManagementUseCase;
-import app.domain.model.User;
-import app.domain.model.Patient;
-import app.domain.model.EmergencyContact;
-import app.domain.model.Insurance;
+import app.application.port.in.InventoryManagementUseCase;
+import app.application.port.in.NursingUseCase;
+import app.application.port.in.MedicalAttentionUseCase;
+import app.domain.model.*;
 import app.domain.model.valueObjects.Role;
 import app.domain.model.valueObjects.Gender;
-
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component
 public class ClinicConsoleApp {
     
     private final UserManagementUseCase userManagementUseCase;
     private final PatientManagementUseCase patientManagementUseCase;
+    private final InventoryManagementUseCase inventoryManagementUseCase;
+    private final NursingUseCase nursingUseCase;
+    private final MedicalAttentionUseCase medicalAttentionUseCase;
     private final Scanner scanner;
     
     @Autowired
     public ClinicConsoleApp(UserManagementUseCase userManagementUseCase, 
-                           PatientManagementUseCase patientManagementUseCase) {
+                           PatientManagementUseCase patientManagementUseCase,
+                           InventoryManagementUseCase inventoryManagementUseCase,
+                           NursingUseCase nursingUseCase,
+                           MedicalAttentionUseCase medicalAttentionUseCase) {
         this.userManagementUseCase = userManagementUseCase;
         this.patientManagementUseCase = patientManagementUseCase;
+        this.inventoryManagementUseCase = inventoryManagementUseCase;
+        this.nursingUseCase = nursingUseCase;
+        this.medicalAttentionUseCase = medicalAttentionUseCase;
         this.scanner = new Scanner(System.in);
     }
     
@@ -50,6 +58,15 @@ public class ClinicConsoleApp {
                     patientManagementMenu();
                     break;
                 case 3:
+                    inventoryManagementMenu();
+                    break;
+                case 4:
+                    nursingMenu();
+                    break;
+                case 5:
+                    medicalAttentionMenu();
+                    break;
+                case 6:
                     System.out.println("¡Gracias por usar el sistema!");
                     return;
                 default:
@@ -62,7 +79,10 @@ public class ClinicConsoleApp {
         System.out.println("\n=== MENÚ PRINCIPAL ===");
         System.out.println("1. Gestión de Usuarios (Recursos Humanos)");
         System.out.println("2. Gestión de Pacientes (Personal Administrativo)");
-        System.out.println("3. Salir");
+        System.out.println("3. Gestión de Inventarios (Soporte de Información)");
+        System.out.println("4. Enfermería (Signos Vitales)");
+        System.out.println("5. Atención Médica (Médicos)");
+        System.out.println("6. Salir");
     }
     
     private void userManagementMenu() {
@@ -294,6 +314,336 @@ public class ClinicConsoleApp {
         System.out.println(bill);
     }
     
+    // === MENÚ DE INVENTARIOS ===
+    
+    private void inventoryManagementMenu() {
+        while (true) {
+            System.out.println("\n=== GESTIÓN DE INVENTARIOS ===");
+            System.out.println("1. Medicamentos");
+            System.out.println("2. Procedimientos");
+            System.out.println("3. Ayudas Diagnósticas");
+            System.out.println("4. Volver al Menú Principal");
+            
+            int option = readInt("Seleccione una opción: ");
+            
+            switch (option) {
+                case 1:
+                    medicineInventoryMenu();
+                    break;
+                case 2:
+                    procedureInventoryMenu();
+                    break;
+                case 3:
+                    diagnosticAidInventoryMenu();
+                    break;
+                case 4:
+                    return;
+                default:
+                    System.out.println("Opción inválida.");
+            }
+        }
+    }
+    
+    private void medicineInventoryMenu() {
+        while (true) {
+            System.out.println("\n=== INVENTARIO DE MEDICAMENTOS ===");
+            System.out.println("1. Crear Medicamento");
+            System.out.println("2. Listar Medicamentos");
+            System.out.println("3. Buscar Medicamento");
+            System.out.println("4. Eliminar Medicamento");
+            System.out.println("5. Volver");
+            
+            int option = readInt("Seleccione una opción: ");
+            
+            switch (option) {
+                case 1:
+                    createMedicine();
+                    break;
+                case 2:
+                    listMedicines();
+                    break;
+                case 3:
+                    searchMedicine();
+                    break;
+                case 4:
+                    deleteMedicine();
+                    break;
+                case 5:
+                    return;
+                default:
+                    System.out.println("Opción inválida.");
+            }
+        }
+    }
+    
+    private void createMedicine() {
+        System.out.println("\n=== CREAR MEDICAMENTO ===");
+        
+        try {
+            String id = readString("ID del medicamento: ");
+            String name = readString("Nombre: ");
+            String description = readString("Descripción: ");
+            double cost = readDouble("Costo: ");
+            
+            Medicine medicine = new Medicine(id, name, description, cost);
+            Medicine created = inventoryManagementUseCase.createMedicine(medicine);
+            
+            System.out.println("✅ Medicamento creado: " + created.getName());
+        } catch (Exception e) {
+            System.out.println("❌ Error: " + e.getMessage());
+        }
+    }
+    
+    private void listMedicines() {
+        System.out.println("\n=== LISTA DE MEDICAMENTOS ===");
+        List<Medicine> medicines = inventoryManagementUseCase.getAllMedicines();
+        
+        if (medicines.isEmpty()) {
+            System.out.println("No hay medicamentos registrados.");
+            return;
+        }
+        
+        for (Medicine medicine : medicines) {
+            System.out.println("ID: " + medicine.getId() + 
+                             " | Nombre: " + medicine.getName() + 
+                             " | Costo: $" + medicine.getCost());
+        }
+    }
+    
+    private void searchMedicine() {
+        System.out.println("\n=== BUSCAR MEDICAMENTO ===");
+        String id = readString("ID del medicamento: ");
+        Medicine medicine = inventoryManagementUseCase.findMedicineById(id);
+        
+        if (medicine != null) {
+            System.out.println("Medicamento encontrado:");
+            System.out.println("ID: " + medicine.getId());
+            System.out.println("Nombre: " + medicine.getName());
+            System.out.println("Descripción: " + medicine.getDescription());
+            System.out.println("Costo: $" + medicine.getCost());
+        } else {
+            System.out.println("❌ No se encontró el medicamento.");
+        }
+    }
+    
+    private void deleteMedicine() {
+        System.out.println("\n=== ELIMINAR MEDICAMENTO ===");
+        String id = readString("ID del medicamento: ");
+        boolean deleted = inventoryManagementUseCase.deleteMedicine(id);
+        
+        if (deleted) {
+            System.out.println("✅ Medicamento eliminado.");
+        } else {
+            System.out.println("❌ No se encontró el medicamento.");
+        }
+    }
+    
+    private void procedureInventoryMenu() {
+        System.out.println("\n💡 Funcionalidad de Procedimientos - Similar a medicamentos");
+        System.out.println("Presione Enter para continuar...");
+        scanner.nextLine();
+    }
+    
+    private void diagnosticAidInventoryMenu() {
+        System.out.println("\n💡 Funcionalidad de Ayudas Diagnósticas - Similar a medicamentos");
+        System.out.println("Presione Enter para continuar...");
+        scanner.nextLine();
+    }
+    
+    // === MENÚ DE ENFERMERÍA ===
+    
+    private void nursingMenu() {
+        while (true) {
+            System.out.println("\n=== ENFERMERÍA ===");
+            System.out.println("1. Registrar Signos Vitales");
+            System.out.println("2. Ver Signos Vitales de Paciente");
+            System.out.println("3. Volver al Menú Principal");
+            
+            int option = readInt("Seleccione una opción: ");
+            
+            switch (option) {
+                case 1:
+                    recordVitalSigns();
+                    break;
+                case 2:
+                    viewPatientVitalSigns();
+                    break;
+                case 3:
+                    return;
+                default:
+                    System.out.println("Opción inválida.");
+            }
+        }
+    }
+    
+    private void recordVitalSigns() {
+        System.out.println("\n=== REGISTRAR SIGNOS VITALES ===");
+        
+        try {
+            String patientId = readString("Cédula del paciente: ");
+            String nurseId = readString("Cédula de la enfermera: ");
+            String bloodPressure = readString("Presión arterial (ej: 120/80): ");
+            double temperature = readDouble("Temperatura (°C): ");
+            int pulse = readInt("Pulso (ppm): ");
+            int oxygenLevel = readInt("Nivel de oxígeno (%): ");
+            
+            VitalSigns vitalSigns = new VitalSigns(
+                null, patientId, nurseId, LocalDateTime.now(),
+                bloodPressure, temperature, pulse, oxygenLevel
+            );
+            
+            VitalSigns recorded = nursingUseCase.recordVitalSigns(vitalSigns);
+            System.out.println("✅ Signos vitales registrados exitosamente.");
+        } catch (Exception e) {
+            System.out.println("❌ Error: " + e.getMessage());
+        }
+    }
+    
+    private void viewPatientVitalSigns() {
+        System.out.println("\n=== VER SIGNOS VITALES ===");
+        String patientId = readString("Cédula del paciente: ");
+        List<VitalSigns> vitalSignsList = nursingUseCase.getPatientVitalSigns(patientId);
+        
+        if (vitalSignsList.isEmpty()) {
+            System.out.println("No hay signos vitales registrados para este paciente.");
+            return;
+        }
+        
+        for (VitalSigns vs : vitalSignsList) {
+            System.out.println("\n📊 Registro: " + vs.getRecordDate());
+            System.out.println("Presión arterial: " + vs.getBloodPressure());
+            System.out.println("Temperatura: " + vs.getTemperature() + "°C");
+            System.out.println("Pulso: " + vs.getPulse() + " ppm");
+            System.out.println("Oxígeno: " + vs.getOxygenLevel() + "%");
+            System.out.println("Enfermera: " + vs.getNurseId());
+        }
+    }
+    
+    // === MENÚ DE ATENCIÓN MÉDICA ===
+    
+    private void medicalAttentionMenu() {
+        while (true) {
+            System.out.println("\n=== ATENCIÓN MÉDICA ===");
+            System.out.println("1. Crear Historia Clínica");
+            System.out.println("2. Ver Historia Clínica de Paciente");
+            System.out.println("3. Crear Orden Médica");
+            System.out.println("4. Ver Órdenes de Paciente");
+            System.out.println("5. Volver al Menú Principal");
+            
+            int option = readInt("Seleccione una opción: ");
+            
+            switch (option) {
+                case 1:
+                    createMedicalRecord();
+                    break;
+                case 2:
+                    viewMedicalHistory();
+                    break;
+                case 3:
+                    createMedicalOrder();
+                    break;
+                case 4:
+                    viewPatientOrders();
+                    break;
+                case 5:
+                    return;
+                default:
+                    System.out.println("Opción inválida.");
+            }
+        }
+    }
+    
+    private void createMedicalRecord() {
+        System.out.println("\n=== CREAR HISTORIA CLÍNICA ===");
+        
+        try {
+            String patientId = readString("Cédula del paciente: ");
+            String doctorId = readString("Cédula del médico: ");
+            String reason = readString("Motivo de consulta: ");
+            String symptoms = readString("Sintomatología: ");
+            String diagnosis = readString("Diagnóstico: ");
+            
+            MedicalRecord record = new MedicalRecord(
+                null, patientId, doctorId, LocalDate.now(),
+                reason, symptoms, diagnosis
+            );
+            
+            MedicalRecord created = medicalAttentionUseCase.createMedicalRecord(record);
+            System.out.println("✅ Historia clínica creada exitosamente.");
+        } catch (Exception e) {
+            System.out.println("❌ Error: " + e.getMessage());
+        }
+    }
+    
+    private void viewMedicalHistory() {
+        System.out.println("\n=== VER HISTORIA CLÍNICA ===");
+        String patientId = readString("Cédula del paciente: ");
+        List<MedicalRecord> records = medicalAttentionUseCase.getPatientMedicalHistory(patientId);
+        
+        if (records.isEmpty()) {
+            System.out.println("No hay registros médicos para este paciente.");
+            return;
+        }
+        
+        for (MedicalRecord record : records) {
+            System.out.println("\n📋 Fecha: " + record.getDate());
+            System.out.println("Médico: " + record.getDoctorId());
+            System.out.println("Motivo: " + record.getReason());
+            System.out.println("Síntomas: " + record.getSymptoms());
+            System.out.println("Diagnóstico: " + record.getDiagnosis());
+            System.out.println("-----------------------------------");
+        }
+    }
+    
+    private void createMedicalOrder() {
+        System.out.println("\n=== CREAR ORDEN MÉDICA ===");
+        
+        try {
+            String orderNumber = readString("Número de orden (máx 6 dígitos): ");
+            String patientId = readString("Cédula del paciente: ");
+            String doctorId = readString("Cédula del médico: ");
+            
+            System.out.println("\nTipo de orden:");
+            System.out.println("1. MEDICINE (Medicamento)");
+            System.out.println("2. PROCEDURE (Procedimiento)");
+            System.out.println("3. DIAGNOSTIC_AID (Ayuda Diagnóstica)");
+            int typeOption = readInt("Seleccione: ");
+            
+            String orderType = switch(typeOption) {
+                case 1 -> "MEDICINE";
+                case 2 -> "PROCEDURE";
+                case 3 -> "DIAGNOSTIC_AID";
+                default -> "MEDICINE";
+            };
+            
+            Order order = new Order(orderNumber, patientId, doctorId, 
+                                   LocalDate.now(), orderType);
+            
+            Order created = medicalAttentionUseCase.createMedicalOrder(order);
+            System.out.println("✅ Orden médica creada: " + created.getOrderNumber());
+        } catch (Exception e) {
+            System.out.println("❌ Error: " + e.getMessage());
+        }
+    }
+    
+    private void viewPatientOrders() {
+        System.out.println("\n=== VER ÓRDENES DE PACIENTE ===");
+        String patientId = readString("Cédula del paciente: ");
+        List<Order> orders = medicalAttentionUseCase.getPatientOrders(patientId);
+        
+        if (orders.isEmpty()) {
+            System.out.println("No hay órdenes para este paciente.");
+            return;
+        }
+        
+        for (Order order : orders) {
+            System.out.println("\n📄 Orden #" + order.getOrderNumber());
+            System.out.println("Fecha: " + order.getCreationDate());
+            System.out.println("Tipo: " + order.getOrderType());
+            System.out.println("Médico: " + order.getDoctorId());
+        }
+    }
+    
     // === MÉTODOS AUXILIARES ===
     
     private String readString(String prompt) {
@@ -306,6 +656,18 @@ public class ClinicConsoleApp {
             try {
                 System.out.print(prompt);
                 int value = Integer.parseInt(scanner.nextLine().trim());
+                return value;
+            } catch (NumberFormatException e) {
+                System.out.println("Por favor ingrese un número válido.");
+            }
+        }
+    }
+    
+    private double readDouble(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                double value = Double.parseDouble(scanner.nextLine().trim());
                 return value;
             } catch (NumberFormatException e) {
                 System.out.println("Por favor ingrese un número válido.");
