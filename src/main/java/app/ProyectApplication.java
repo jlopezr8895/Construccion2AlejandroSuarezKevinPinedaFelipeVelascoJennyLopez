@@ -7,8 +7,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+//es la interfaz que permite ejecutar código apenas arranca la aplicación.
 public class ProyectApplication implements CommandLineRunner {
     
+    //sirve para inyectar dependencias automáticamente 
+    //Spring crea un objeto y lo pone aquí sin necesidad de new
     @Autowired
     private ClinicConsoleApp consoleApp;
     
@@ -16,7 +19,11 @@ public class ProyectApplication implements CommandLineRunner {
         SpringApplication.run(ProyectApplication.class, args);
     }
     
+    
+    //El @Override está para indicar que estamos sobrescribiendo el método run de la interfaz CommandLineRunner
     @Override
+    //cuando la aplicación corre, inmediatamente se abre la interfaz de consola
+    //donde se puede interactuar con la clínica
     public void run(String... args) throws Exception {
         consoleApp.start();
     }

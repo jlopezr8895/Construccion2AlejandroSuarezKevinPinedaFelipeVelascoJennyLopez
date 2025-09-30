@@ -4,6 +4,8 @@ package app.application.port.in;
 import app.domain.model.Patient;
 import java.util.List;
 
+// los puertos de entrada son los que definen las operaciones que la aplicación debe ofrecer al mundo externo
+
 /**
  * Define las operaciones de facturación
  * Usada por el rol ADMINISTRATIVE
