@@ -42,6 +42,9 @@ public class Patient {
                phoneNumber != null && phoneNumber.length() == 10;
     }
     
+/*Este método valida que una contraseña sea segura. Revisa que tenga al menos 8 caracteres, que
+incluya una letra mayúscula, un número y un carácter especial. Si cumple con todo, 
+devuelve true, de lo contrario false.*/
     private boolean isValidPassword(String password) {
         if (password.length() < 8) return false;
         boolean hasUpper = false, hasNumber = false, hasSpecial = false;

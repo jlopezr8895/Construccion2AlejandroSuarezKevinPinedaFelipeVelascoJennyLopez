@@ -13,6 +13,9 @@ public class EmergencyContact {
         this.phoneNumber = phoneNumber;
     }
     
+/* Verifica que el nombre no sea nulo ni vacío,
+que la relación también esté presente y
+que el teléfono tenga exactamente 10 dígitos.*/
     public boolean isValid() {
         return name != null && !name.isEmpty() &&
                relation != null && !relation.isEmpty() &&

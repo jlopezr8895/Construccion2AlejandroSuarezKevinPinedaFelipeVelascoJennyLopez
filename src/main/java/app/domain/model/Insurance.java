@@ -18,11 +18,19 @@ public class Insurance {
         this.expiryDate = expiryDate;
     }
     
+/*Que el nombre de la compañía no esté vacío ni nulo,   
+Que el número de póliza no esté vacío ni nulo,
+Si ambos campos son correctos devuelve true.*/
+    
     public boolean isValid() {
         return companyName != null && !companyName.isEmpty() &&
                policyNumber != null && !policyNumber.isEmpty();
     }
     
+/*Si isActive es false retorna false osea que el seguro está inactivo.
+Si no tiene fecha de expiración (expiryDate == null) retorna false.
+Si tiene fecha de expiración compara con la fecha actual:
+Si la póliza vence en el futuro o vence hoy, retorna true.*/
     public boolean isCurrentlyActive() {
         if (!isActive) return false;
         if (expiryDate == null) return false;
