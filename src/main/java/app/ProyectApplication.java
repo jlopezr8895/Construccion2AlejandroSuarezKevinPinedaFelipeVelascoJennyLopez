@@ -28,3 +28,22 @@ public class ProyectApplication implements CommandLineRunner {
         consoleApp.start();
     }
 }
+
+
+
+/*Anotación	Propósito principal
+@Override	Sobrescribir métodos de la clase padre o interfaz.
+@Autowired	Inyección automática de dependencias.
+@Component	Marca una clase como bean de Spring.
+@Service	Bean especializado en lógica de negocio.
+@Repository	Bean especializado en acceso a datos.
+@Controller	Bean que maneja solicitudes HTTP.
+@Entity	Marca una clase como entidad para base de datos.
+@Value	Inyecta valores de configuración en propiedades de clase.
+
+
+@Component “registrar al empleado en la empresa”.
+@Autowired “darle automáticamente las herramientas que necesita”.
+@Service “empleado que hace tareas importantes (lógica)”.
+@Repository “empleado que guarda y busca datos en el almacén (DB)”.
+@Controller “empleado que atiende clientes (HTTP)”.*/

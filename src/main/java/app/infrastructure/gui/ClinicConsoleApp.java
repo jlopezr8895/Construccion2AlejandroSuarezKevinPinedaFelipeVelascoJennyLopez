@@ -18,6 +18,7 @@ import java.util.Scanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+//@Component Spring la reconoce como un bean y puede inyectar dependencias automáticamente.
 @Component
 public class ClinicConsoleApp {
     
@@ -25,14 +26,15 @@ public class ClinicConsoleApp {
     private final PatientManagementUseCase patientManagementUseCase;
     private final Scanner scanner;
     
+    //Constructor que inyecta los casos de uso de usuarios y pacientes.
     @Autowired
-    public ClinicConsoleApp(UserManagementUseCase userManagementUseCase, 
-                           PatientManagementUseCase patientManagementUseCase) {
+    public ClinicConsoleApp(UserManagementUseCase userManagementUseCase, PatientManagementUseCase patientManagementUseCase) {
         this.userManagementUseCase = userManagementUseCase;
         this.patientManagementUseCase = patientManagementUseCase;
         this.scanner = new Scanner(System.in);
     }
     
+    //Inicia la aplicación mostrando el menú principal
     public void start() {
         System.out.println("=================================");
         System.out.println("    SISTEMA DE GESTIÓN CLÍNICA   ");
@@ -58,6 +60,7 @@ public class ClinicConsoleApp {
         }
     }
     
+    // Muestra el menú principal de la aplicación.
     private void showMainMenu() {
         System.out.println("\n=== MENÚ PRINCIPAL ===");
         System.out.println("1. Gestión de Usuarios (Recursos Humanos)");
@@ -65,6 +68,7 @@ public class ClinicConsoleApp {
         System.out.println("3. Salir");
     }
     
+    //Muestra el menú de gestión de usuarios y procesa las opciones seleccionadas.
     private void userManagementMenu() {
         while (true) {
             System.out.println("\n=== GESTIÓN DE USUARIOS ===");
@@ -97,6 +101,9 @@ public class ClinicConsoleApp {
         }
     }
     
+    //Crea un nuevo usuario leyendo los datos desde consola
+    //y usando el caso de uso correspondiente.
+    
     private void createUser() {
         System.out.println("\n=== CREAR USUARIO ===");
         
@@ -110,6 +117,7 @@ public class ClinicConsoleApp {
             Role role = readRole();
             
             User user = new User(id, fullName, email, phoneNumber, birthDate, address, role);
+            //Pasa el usuario al caso de uso
             User createdUser = userManagementUseCase.createUser(user);
             
             System.out.println("✅ Usuario creado exitosamente: " + createdUser.getFullName());
@@ -119,6 +127,7 @@ public class ClinicConsoleApp {
         }
     }
     
+    //Muestra la lista de todos los pacientes registrados.
     private void listUsers() {
         System.out.println("\n=== LISTA DE USUARIOS ===");
         
@@ -136,6 +145,7 @@ public class ClinicConsoleApp {
         }
     }
     
+    // Busca un paciente por su cédula y muestra la información encontrada.
     private void searchUser() {
         System.out.println("\n=== BUSCAR USUARIO ===");
         
@@ -154,6 +164,7 @@ public class ClinicConsoleApp {
         }
     }
     
+    //Elimina un usuario por su cédula usando el caso de uso.
     private void deleteUser() {
         System.out.println("\n=== ELIMINAR USUARIO ===");
         
@@ -199,6 +210,8 @@ public class ClinicConsoleApp {
         }
     }
     
+    //Registra un nuevo paciente leyendo los datos desde consola,
+    // incluyendo información opcional como contacto de emergencia y seguro.
     private void registerPatient() {
         System.out.println("\n=== REGISTRAR PACIENTE ===");
         
@@ -218,30 +231,57 @@ public class ClinicConsoleApp {
             
             System.out.println("\n--- Información adicional (opcional) ---");
             String emergencyName = readString("Nombre contacto de emergencia (Enter para omitir): ");
+          
+            /**
+             * Verifica si el usuario ingresó un nombre para el contacto de emergencia.
+             * Si lo hizo, solicita la relación y el teléfono del contacto,
+             * crea un objeto EmergencyContact y lo asigna al paciente.
+             */
             if (!emergencyName.trim().isEmpty()) {
+                // Leer la relación del contacto de emergencia
                 String emergencyRelation = readString("Relación: ");
+                // Leer el teléfono del contacto de emergencia
                 String emergencyPhone = readString("Teléfono de emergencia: ");
+                // Crear el objeto EmergencyContact con los datos ingresados
                 EmergencyContact emergencyContact = new EmergencyContact(
                     emergencyName, emergencyRelation, emergencyPhone
                 );
+                // Asociar el contacto de emergencia al paciente
                 patient.setEmergencyContact(emergencyContact);
             }
-            
+
+            // === Información opcional: Seguro del paciente ===
+            /**
+             * Solicita la compañía de seguros. Si se ingresa un valor, se solicitan
+             * número de póliza, estado de la póliza y fecha de vencimiento si aplica.
+             * Luego crea un objeto Insurance y lo asigna al paciente.
+             */
             String insuranceCompany = readString("Compañía de seguros (Enter para omitir): ");
             if (!insuranceCompany.trim().isEmpty()) {
+                // Leer el número de póliza
                 String policyNumber = readString("Número de póliza: ");
+                // Leer si la póliza está activa
                 boolean isActive = readBoolean("¿Póliza activa? (s/n): ");
                 LocalDate expiryDate = null;
+                // Si la póliza está activa, solicitar la fecha de vencimiento
                 if (isActive) {
                     expiryDate = readDate("Fecha de vencimiento (dd/MM/yyyy): ");
                 }
+                // Crear el objeto Insurance con los datos ingresados
                 Insurance insurance = new Insurance(
                     insuranceCompany, policyNumber, isActive, expiryDate
                 );
+                // Asociar el seguro al paciente
                 patient.setInsurance(insurance);
             }
-            
+
+            /**
+             * Envía el objeto Patient (con los datos básicos y opcionales)
+             * al caso de uso de registro de pacientes, que se encargará
+             * de validar y guardar la información en la base de datos.
+             */
             Patient createdPatient = patientManagementUseCase.registerPatient(patient);
+
             System.out.println("✅ Paciente registrado exitosamente: " + createdPatient.getFullName());
             
         } catch (Exception e) {
@@ -294,7 +334,7 @@ public class ClinicConsoleApp {
         System.out.println(bill);
     }
     
-    // === MÉTODOS AUXILIARES ===
+    //MÉTODOS AUXILIARES 
     
     private String readString(String prompt) {
         System.out.print(prompt);
