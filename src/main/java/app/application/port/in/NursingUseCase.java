@@ -1,13 +1,32 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package app.application.port.in;
 
+import app.domain.model.VitalSigns;
+import java.util.List;
+
 /**
- *
- * @author Asus
+ * Define las operaciones de enfermería
+ * Usada por el rol NURSE
  */
-public class NursingUseCase {
+public interface NursingUseCase {
     
+    /**
+     * Registra signos vitales de un paciente
+     */
+    VitalSigns recordVitalSigns(VitalSigns vitalSigns);
+    
+    /**
+     * Obtiene todos los signos vitales de un paciente
+     */
+    List<VitalSigns> getPatientVitalSigns(String patientId);
+    
+    /**
+     * Obtiene los signos vitales registrados por una enfermera
+     */
+    List<VitalSigns> getVitalSignsByNurse(String nurseId);
+    
+    /**
+     * Busca signos vitales por ID
+     */
+    VitalSigns findVitalSignsById(String id);
 }

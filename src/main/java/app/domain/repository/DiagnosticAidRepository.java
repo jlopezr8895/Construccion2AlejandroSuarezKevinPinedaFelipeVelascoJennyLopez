@@ -1,13 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package app.domain.repository;
 
-/**
- *
- * @author Asus
- */
-public class DiagnosticAidRepository {
-    
+import app.domain.model.DiagnosticAid;
+import java.util.List;
+import java.util.Optional;
+
+public interface DiagnosticAidRepository {
+    DiagnosticAid save(DiagnosticAid diagnosticAid);
+    Optional<DiagnosticAid> findById(String id);
+    List<DiagnosticAid> findAll();
+    List<DiagnosticAid> findByNameContaining(String name);
+    List<DiagnosticAid> findByRequiresSpecialist(boolean requiresSpecialist);
+    boolean existsById(String id);
+    void deleteById(String id);
 }
