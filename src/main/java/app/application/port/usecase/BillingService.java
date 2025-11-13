@@ -1,6 +1,8 @@
 
-package app.application.port.in;
+package app.application.port.usecase;
 
+import app.application.port.in.BillingUseCase;
+import app.application.port.in.PatientManagementUseCase;
 import app.domain.model.Patient;
 import app.domain.model.Order;
 import app.domain.repository.OrderRepository;
