@@ -121,7 +121,8 @@ public class ClinicConsoleApp {
         System.out.println("\n=== CREAR USUARIO ===");
         
         try {
-            String id = readString("Cédula: ");
+            String id = readString("Cédula: ");        
+            String username = readString("Nombre de usuario: ");
             String fullName = readString("Nombre completo: ");
             String email = readString("Email: ");
             String phoneNumber = readString("Teléfono: ");
@@ -129,7 +130,7 @@ public class ClinicConsoleApp {
             String address = readString("Dirección: ");
             Role role = readRole();
             
-            User user = new User(id, fullName, email, phoneNumber, birthDate, address, role);
+            User user = new User(id, username, fullName, email, phoneNumber, birthDate, address, role);
             User createdUser = userManagementUseCase.createUser(user);
             
             System.out.println("✅ Usuario creado exitosamente: " + createdUser.getFullName());

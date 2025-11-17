@@ -13,8 +13,8 @@ public class UserMapper {
             user.getId(),
             user.getFullName(),
             user.getEmail(),
-                user.getPassword(),
-                user.getPhoneNumber(),
+            user.getPassword(),
+            user.getPhoneNumber(),
             user.getBirthDate(),
             user.getAddress(),
             user.getRole()
@@ -25,10 +25,11 @@ public class UserMapper {
         if (userEntity == null) return null;
         return new User(
             userEntity.getId(),
+            null,
             userEntity.getFullName(),
             userEntity.getEmail(),
-                userEntity.getPassword(),
-                userEntity.getPhoneNumber(),
+            userEntity.getPassword(), 
+            userEntity.getPhoneNumber(),
             userEntity.getBirthDate(),
             userEntity.getAddress(),
             userEntity.getRole()

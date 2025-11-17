@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 public class CreateUserRequest {
     private String id;
+    private String username;
     private String fullName;
     private String email;
     private String password;
@@ -16,9 +17,10 @@ public class CreateUserRequest {
     public CreateUserRequest() {
     }
 
-    public CreateUserRequest(String id, String fullName, String email, String password, String phoneNumber, 
+    public CreateUserRequest(String id, String username, String fullName, String email, String password, String phoneNumber, 
                            LocalDate birthDate, String address, Role role) {
         this.id = id;
+        this.username = username;
         this.fullName = fullName;
         this.email = email;
         this.password = password;
@@ -34,6 +36,14 @@ public class CreateUserRequest {
 
     public void setId(String id) {
         this.id = id;
+    }
+    
+    public String getUsername() { 
+        return username;
+    }
+
+    public void setUsername(String username) {  
+        this.username = username;
     }
 
     public String getFullName() {

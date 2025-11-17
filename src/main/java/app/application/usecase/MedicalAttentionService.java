@@ -89,7 +89,6 @@ public class MedicalAttentionService implements MedicalAttentionUseCase {
         }
         
         // NOTA: Para simplificar, guardamos como string en logs
-        // En un proyecto real, tendrías un VitalSignsRepository
         System.out.println("📊 Signos vitales registrados: " + vitalSigns.getId() + 
                           " para paciente: " + vitalSigns.getPatientId());
         
@@ -99,7 +98,6 @@ public class MedicalAttentionService implements MedicalAttentionUseCase {
     @Override
     public List<VitalSigns> getPatientVitalSigns(String patientId) {
         // NOTA: Para simplificar, retornamos lista vacía
-        // En un proyecto real, tendrías un VitalSignsRepository
         System.out.println("🔍 Buscando signos vitales para paciente: " + patientId);
         return List.of(); // Lista vacía por simplicidad
     }
@@ -112,7 +110,6 @@ public class MedicalAttentionService implements MedicalAttentionUseCase {
         }
         
         // NOTA: Para simplificar, solo registramos en logs
-        // En un proyecto real, tendrías una tabla de administración de medicamentos
         System.out.println("💊 Medicamento administrado - Orden: " + orderNumber + 
                           ", Item: " + itemNumber + ", Enfermera: " + nurseId);
         

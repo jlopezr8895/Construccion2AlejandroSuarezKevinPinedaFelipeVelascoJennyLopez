@@ -27,9 +27,10 @@ public class HumanResourcesController {
     public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest request) {
         User user = new User(
             request.getId(),
+            request.getUsername(),
             request.getFullName(),
             request.getEmail(),
-                request.getPassword(),
+            request.getPassword(),
             request.getPhoneNumber(),
             request.getBirthDate(),
             request.getAddress(),

@@ -8,21 +8,21 @@ import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
+    
     /**
-     * Maneja IllegalArgumentException (409 CONFLICT)
-     * Se lanza cuando ya existe un recurso o hay conflictos de negocio
+     * Maneja IllegalArgumentException (401 UNAUTHORIZED)
+     * Se lanza cuando las credenciales son inválidas
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         ErrorResponse errorResponse = new ErrorResponse(
-            HttpStatus.CONFLICT.value(),
+            HttpStatus.UNAUTHORIZED.value(),
             ex.getMessage(),
             LocalDateTime.now()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
-
+    
     /**
      * Maneja IllegalStateException (400 BAD REQUEST)
      * Se lanza cuando los datos de entrada son inválidos (validaciones del builder/validators)
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
-
+    
     /**
      * Maneja cualquier otra excepción no esperada (500 INTERNAL SERVER ERROR)
      */
